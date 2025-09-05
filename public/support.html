@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LIMITCLEAN - Suporte</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <h1 class="app-title">LIMITCLEAN</h1>
+            </div>
+            
+            <div class="header-right">
+                <span class="user-info">
+                    <span id="userName">Carregando...</span>
+                    <span class="user-role" id="userRole"></span>
+                </span>
+                <button id="logoutBtn" class="btn-logout">Sair</button>
+            </div>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="navbar">
+            <ul class="nav-menu">
+                <li><a href="/index.html" class="nav-link">Dashboard</a></li>
+                <li><a href="/cadastro.html" class="nav-link">Cadastro</a></li>
+                <li><a href="/support.html" class="nav-link active">Suporte</a></li>
+                <li><a href="/config.html" class="nav-link">Configurações</a></li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="support-container">
+                <!-- FAQ Section -->
+                <section class="faq-section">
+                    <h2>Perguntas Frequentes (FAQ)</h2>
+                    
+                    <div class="faq-item">
+                        <h3>Como funciona o processo de limpeza de nome?</h3>
+                        <p>O processo de limpeza de nome remove negativações indevidas junto aos órgãos de proteção ao crédito (SPC, Serasa, etc.). O prazo padrão é de até 30 dias úteis.</p>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <h3>O que é o serviço de Rating?</h3>
+                        <p>O Rating é uma análise completa do seu perfil creditício que ajuda a melhorar seu score. Inclui análise de documentos e orientações personalizadas.</p>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <h3>Qual a diferença entre Rating PF e PJ?</h3>
+                        <p>Rating PF é para pessoas físicas e Rating PJ é para pessoas jurídicas. Cada um tem formulários e análises específicas para o tipo de cliente.</p>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <h3>Como acompanhar o status do meu cadastro?</h3>
+                        <p>Você pode acompanhar o status no Dashboard. Os status são: Restrição (inicial), Finalizado (após 30 dias) e Reprotocolo (após 6 meses).</p>
+                    </div>
+                </section>
+
+                <!-- Support Ticket Form -->
+                <section class="ticket-section">
+                    <h2>Abrir Chamado de Suporte</h2>
+                    
+                    <form id="ticketForm" class="support-form">
+                        <div class="form-group">
+                            <label for="titulo">Título do Chamado *</label>
+                            <input type="text" id="titulo" name="titulo" required maxlength="200">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="descricao">Descrição *</label>
+                            <textarea id="descricao" name="descricao" required rows="5" maxlength="2000" placeholder="Descreva detalhadamente seu problema ou dúvida..."></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="anexo">Anexo (opcional)</label>
+                            <input type="file" id="anexo" name="anexo" accept="image/*,.pdf">
+                            <small class="form-help">Máximo 5MB - Apenas imagens e PDF</small>
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button type="submit" class="btn-primary">Enviar Chamado</button>
+                            <button type="reset" class="btn-secondary">Limpar</button>
+                        </div>
+                    </form>
+                </section>
+
+                <!-- My Tickets -->
+                <section class="my-tickets-section">
+                    <h2>Meus Chamados</h2>
+                    
+                    <div class="tickets-list" id="ticketsList">
+                        <div class="loading">Carregando chamados...</div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <script src="/js/support.js"></script>
+</body>
+</html>

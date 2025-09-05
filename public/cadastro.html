@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LIMITCLEAN - Cadastro</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <h1 class="app-title">LIMITCLEAN</h1>
+            </div>
+            
+            <div class="header-right">
+                <span class="user-info">
+                    <span id="userName">Carregando...</span>
+                    <span class="user-role" id="userRole"></span>
+                </span>
+                <button id="logoutBtn" class="btn-logout">Sair</button>
+            </div>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="navbar">
+            <ul class="nav-menu">
+                <li><a href="/index.html" class="nav-link">Dashboard</a></li>
+                <li><a href="/cadastro.html" class="nav-link active">Cadastro</a></li>
+                <li><a href="/support.html" class="nav-link">Suporte</a></li>
+                <li><a href="/config.html" class="nav-link">Configurações</a></li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="cadastro-container">
+                <!-- Tipo de Cadastro -->
+                <section class="type-selection">
+                    <h2>Tipo de Cadastro</h2>
+                    <div class="type-buttons">
+                        <button id="btnLimpeza" class="btn-type active" data-type="limpeza">Limpeza</button>
+                        <button id="btnRating" class="btn-type" data-type="rating">Rating</button>
+                    </div>
+                </section>
+
+                <!-- Formulário de Limpeza -->
+                <section id="formLimpeza" class="form-section active">
+                    <h3>Cadastro de Limpeza</h3>
+                    <form id="limpezaForm" class="cadastro-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="limpeza_tipo_doc">Tipo de Documento *</label>
+                                <select id="limpeza_tipo_doc" name="tipo_doc" required>
+                                    <option value="">Selecione</option>
+                                    <option value="cpf">CPF</option>
+                                    <option value="cnpj">CNPJ</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="limpeza_documento">CPF/CNPJ *</label>
+                                <input type="text" id="limpeza_documento" name="documento" required maxlength="18" placeholder="000.000.000-00">
+                                <div class="validation-feedback"></div>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="limpeza_nome">Nome/Razão Social *</label>
+                                <input type="text" id="limpeza_nome" name="nome" required maxlength="200">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="limpeza_telefone">Telefone</label>
+                                <input type="tel" id="limpeza_telefone" name="telefone" maxlength="20" placeholder="(11) 99999-9999">
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="limpeza_vendedor">Vendedor</label>
+                                <select id="limpeza_vendedor" name="vendedor">
+                                    <option value="">Selecionar vendedor...</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="limpeza_valor">Valor *</label>
+                                <input type="text" id="limpeza_valor" name="valor" required placeholder="R$ 0,00" class="money-input">
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn-primary">Salvar Limpeza</button>
+                            <button type="button" class="btn-secondary" id="limpezaReset">Limpar</button>
+                        </div>
+                    </form>
+                </section>
+
+                <!-- Formulário de Rating -->
+                <section id="formRating" class="form-section">
+                    <h3>Cadastro de Rating</h3>
+                    
+                    <!-- Seleção PF/PJ -->
+                    <div class="rating-type-selection">
+                        <div class="rating-type-buttons">
+                            <button id="btnRatingPF" class="btn-rating-type active" data-subtype="PF">Pessoa Física</button>
+                            <button id="btnRatingPJ" class="btn-rating-type" data-subtype="PJ">Pessoa Jurídica</button>
+                        </div>
+                    </div>
+
+                    <!-- Rating PF -->
+                    <div id="ratingPF" class="rating-subform active">
+                        <h4>Rating - Pessoa Física</h4>
+                        <form id="ratingPFForm" class="cadastro-form">
+                            <!-- Dados Pessoais -->
+                            <fieldset>
+                                <legend>Dados Pessoais</legend>
+                                
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="pf_nome_completo">Nome Completo *</label>
+                                        <input type="text" id="pf_nome_completo" name="nome_completo" required maxlength="200">
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="pf_cpf">CPF *</label>
+                                        <input type="text" id="pf_cpf" name="cpf" required maxlength="14" placeholder="000.000.000-00">
+                                        <div class="validation-feedback"></div>
+                                    </div>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="pf_rg">RG *</label>
+                                        <input type="text" id="pf_rg" name="rg" required maxlength="20">
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="pf_data_expedicao">Data Expedição RG *</label>
+                                        <input type="date" id="pf_data_expedicao" name="data_expedicao" required>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="pf_estado_rg">Estado RG *</label>
+                                        <select id="pf_estado_rg" name="estado_rg" required>
+                                            <option value="">Selecione</option>
+                                            <option value="AC">AC</option>
+                                            <option value="AL">AL</option>
+                                            <option value="AP">AP</option>
+                                            <option value="AM">AM</option>
+                                            <option value="BA">BA</option>
+                                            <option value="CE">CE</option>
+                                            <option value="DF">DF</option>
+                                            <option value="ES">ES</option>
+                                            <option value="GO">GO</option>
+                                            <option value="MA">MA</option>
+                                            <option value="MT">MT</option>
+                                            <option value="MS">MS</option>
+                                            <option value="MG">MG</option>
+                                            <option value="PA">PA</option>
+                                            <option value="PB">PB</option>
+                                            <option value="PR">PR</option>
+                                            <option value="PE">PE</option>
+                                            <option value="PI">PI</option>
+                                            <option value="RJ">RJ</option>
+                                            <option value="RN">RN</option>
+                                            <option value="RS">RS</option>
+                                            <option value="RO">RO</option>
+                                            <option value="RR">RR</option>
+                                            <option value="SC">SC</option>
+                                            <option value="SP">SP</option>
+                                            <option value="SE">SE</option>
+                                            <option value="TO">TO</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="pf_titulo_eleitor">Título de Eleitor</label>
+                                        <input type="text" id="pf_titulo_eleitor" name="titulo_eleitor" maxlength="15">
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="pf_nome_pai">Nome do Pai</label>
+                                        <input type="text" id="pf_nome_pai" name="nome_pai" maxlength="200">
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="pf_estado_civil">Estado Civil *</label>
+                                        <select id="pf_estado_civil" name="estado_civil" required>
+                                            <option value="">Selecione</option>
+                                            <option value="solteiro">Solteiro(a)</option>
+                                            <option value="casado">Casado(a)</option>
+                                            <option value="divorciado">Divorciado(a)</option>
+                                            <option value="viuvo">Viúvo(a)</option>
+                                            <option value="separado">Separado(a)</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </fieldset>
+
+                            <!-- Contato -->
+                            <fieldset>
+                                <legend>Contato</legend>
+                                
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="pf_email">E-mail *</label>
+                                        <input type="email" id="pf_email" name="email" required maxlength="100">
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="pf_telefone">Telefone *</label>
+                                        <input type="tel" id="pf_telefone" name="telefone" required maxlength="20" placeholder="(11) 99999-9999">
+                                    </div>
+                                </div>
+                            </fieldset>
+
+                            <!-- Endereço -->
+                            <fieldset>
+                                <legend>Endereço</legend>
+                                
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="pf_endereco">Endereço Completo *</label>
+                                        <input type="text" id="pf_endereco" name="endereco" required maxlength="300">
+                                    </div>
+                                </div>
+                            </fieldset>
+
+                            <!-- Informações Complementares -->
+                            <fieldset>
+                                <legend>Informações Complementares</legend>
+                                
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="pf_escolaridade">Escolaridade</label>
+                                        <select id="pf_escolaridade" name="escolaridade">
+                                            <option value="">Selecione</option>
+                                            <option value="fundamental_incompleto">Fundamental Incompleto</option>
+                                            <option value="fundamental_completo">Fundamental Completo</option>
+                                            <option value="medio_incompleto">Médio Incompleto</option>
+                                            <option value="medio_completo">Médio Completo</option>
+                                            <option value="superior_incompleto">Superior Incompleto</option>
+                                            <option value="superior_completo">Superior Completo</option>
+                                            <option value="pos_graduacao">Pós-graduação</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="pf_renda_familiar">Renda Familiar</label>
+                                        <input type="text" id="pf_renda_familiar" name="renda_familiar" class="money-input" placeholder="R$ 0,00">
+                                    </div>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="pf_bancos">Bancos (separados por vírgula)</label>
+                                        <input type="text" id="pf_bancos" name="bancos" maxlength="300" placeholder="Ex: Banco do Brasil, Caixa, Bradesco">
+                                    </div>
+                                </div>
+                            </fieldset>
+
+                            <!-- Informações Profissionais -->
+                            <fieldset>
+                                <legend>Informações Profissionais</legend>
+                                
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="pf_empresa">Empresa</label>
+                                        <input type="text" id="pf_empresa" name="empresa" maxlength="200">
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="pf_ocupacao">Ocupação</label>
+                                        <input type="text" id="pf_ocupacao" name="ocupacao" maxlength="100">
+                                    </div>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="pf_data_admissao">Data Admissão</label>
+                                        <input type="date" id="pf_data_admissao" name="data_admissao">
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="pf_renda_comprovada">Renda Comprovada</label>
+                                        <input type="text" id="pf_renda_comprovada" name="renda_comprovada" class="money-input" placeholder="R$ 0,00">
+                                    </div>
+                                </div>
+                            </fieldset>
+
+                            <!-- Referências -->
+                            <fieldset>
+                                <legend>Referências (3 referências)</legend>
+                                
+                                <div class="referencias-container">
+                                    <div class="referencia-item">
+                                        <h5>Referência 1</h5>
+                                        <div class="form-row">
+                                            <div class="form-group">
+                                                <label for="pf_ref1_nome">Nome</label>
+                                                <input type="text" id="pf_ref1_nome" name="ref1_nome" maxlength="200">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="pf_ref1_telefone">Telefone</label>
+                                                <input type="tel" id="pf_ref1_telefone" name="ref1_telefone" maxlength="20">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="referencia-item">
+                                        <h5>Referência 2</h5>
+                                        <div class="form-row">
+                                            <div class="form-group">
+                                                <label for="pf_ref2_nome">Nome</label>
+                                                <input type="text" id="pf_ref2_nome" name="ref2_nome" maxlength="200">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="pf_ref2_telefone">Telefone</label>
+                                                <input type="tel" id="pf_ref2_telefone" name="ref2_telefone" maxlength="20">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="referencia-item">
+                                        <h5>Referência 3</h5>
+                                        <div class="form-row">
+                                            <div class="form-group">
+                                                <label for="pf_ref3_nome">Nome</label>
+                                                <input type="text" id="pf_ref3_nome" name="ref3_nome" maxlength="200">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="pf_ref3_telefone">Telefone</label>
+                                                <input type="tel" id="pf_ref3_telefone" name="ref3_telefone" maxlength="20">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </fieldset>
+
+                            <!-- Dados Serasa -->
+                            <fieldset>
+                                <legend>Acesso Serasa</legend>
+                                
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="pf_senha_serasa">Senha Serasa</label>
+                                        <input type="password" id="pf_senha_serasa" name="senha_serasa" maxlength="50">
+                                        <small class="form-help">Esta informação será criptografada</small>
+                                    </div>
+                                </div>
+                            </fieldset>
+
+                            <!-- Upload de Documentos -->
+                            <fieldset>
+                                <legend>Documentos</legend>
+                                
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="pf_foto_cnh">Foto da CNH</label>
+                                        <input type="file" id="pf_foto_cnh" name="foto_cnh" accept="image/*">
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="pf_foto_rg">Foto do RG</label>
+                                        <input type="file" id="pf_foto_rg" name="foto_rg" accept="image/*">
+                                    </div>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="pf_selfie_documento">Selfie com Documento</label>
+                                        <input type="file" id="pf_selfie_documento" name="selfie_documento" accept="image/*">
+                                    </div>
+                                </div>
+                            </fieldset>
+
+                            <!-- Valor e Vendedor -->
+                            <fieldset>
+                                <legend>Informações do Cadastro</legend>
+                                
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="pf_vendedor">Vendedor</label>
+                                        <select id="pf_vendedor" name="vendedor">
+                                            <option value="">Selecionar vendedor...</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="pf_valor">Valor *</label>
+                                        <input type="text" id="pf_valor" name="valor" required class="money-input" placeholder="R$ 0,00">
+                                    </div>
+                                </div>
+                            </fieldset>
+
+                            <!-- Contrato -->
+                            <div class="contract-section">
+                                <div class="form-group">
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="pf_aceito_termos" name="aceito_termos" required>
+                                        Aceito os termos e condições do contrato
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="submit" class="btn-primary">Salvar Rating PF</button>
+                                <button type="button" class="btn-secondary" id="ratingPFReset">Limpar</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Rating PJ (Simplified for now) -->
+                    <div id="ratingPJ" class="rating-subform">
+                        <h4>Rating - Pessoa Jurídica</h4>
+                        <form id="ratingPJForm" class="cadastro-form">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="pj_razao_social">Razão Social *</label>
+                                    <input type="text" id="pj_razao_social" name="razao_social" required maxlength="200">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="pj_cnpj">CNPJ *</label>
+                                    <input type="text" id="pj_cnpj" name="cnpj" required maxlength="18" placeholder="00.000.000/0000-00">
+                                    <div class="validation-feedback"></div>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="pj_vendedor">Vendedor</label>
+                                    <select id="pj_vendedor" name="vendedor">
+                                        <option value="">Selecionar vendedor...</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="pj_valor">Valor *</label>
+                                    <input type="text" id="pj_valor" name="valor" required class="money-input" placeholder="R$ 0,00">
+                                </div>
+                            </div>
+
+                            <div class="contract-section">
+                                <div class="form-group">
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="pj_aceito_termos" name="aceito_termos" required>
+                                        Aceito os termos e condições do contrato
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="submit" class="btn-primary">Salvar Rating PJ</button>
+                                <button type="button" class="btn-secondary" id="ratingPJReset">Limpar</button>
+                            </div>
+                        </form>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <div id="loadingOverlay" class="loading-overlay" style="display: none;">
+        <div class="loading-spinner"></div>
+        <p>Salvando cadastro...</p>
+    </div>
+
+    <script src="/js/cadastro.js"></script>
+</body>
+</html>

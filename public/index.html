@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LIMITCLEAN - Dashboard</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <h1 class="app-title">LIMITCLEAN</h1>
+            </div>
+            
+            <div class="header-right">
+                <span class="user-info">
+                    <span id="userName">Carregando...</span>
+                    <span class="user-role" id="userRole"></span>
+                </span>
+                <button id="logoutBtn" class="btn-logout">Sair</button>
+            </div>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="navbar">
+            <ul class="nav-menu">
+                <li><a href="/index.html" class="nav-link active">Dashboard</a></li>
+                <li><a href="/cadastro.html" class="nav-link">Cadastro</a></li>
+                <li><a href="/support.html" class="nav-link">Suporte</a></li>
+                <li><a href="/config.html" class="nav-link">Configurações</a></li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- KPIs -->
+            <section class="kpis">
+                <div class="kpi-card">
+                    <div class="kpi-value" id="limpezasCount">0</div>
+                    <div class="kpi-label">Limpezas</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-value" id="ratingsCount">0</div>
+                    <div class="kpi-label">Ratings</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-value" id="totalBruto">R$ 0,00</div>
+                    <div class="kpi-label">Total Bruto</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-value" id="totalLiquido">R$ 0,00</div>
+                    <div class="kpi-label">Total Líquido</div>
+                </div>
+            </section>
+
+            <!-- Filters -->
+            <section class="filters">
+                <div class="filter-group">
+                    <label for="filterYear">Ano:</label>
+                    <select id="filterYear">
+                        <option value="">Todos</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label for="filterMonth">Mês:</label>
+                    <select id="filterMonth">
+                        <option value="">Todos</option>
+                        <option value="1">Janeiro</option>
+                        <option value="2">Fevereiro</option>
+                        <option value="3">Março</option>
+                        <option value="4">Abril</option>
+                        <option value="5">Maio</option>
+                        <option value="6">Junho</option>
+                        <option value="7">Julho</option>
+                        <option value="8">Agosto</option>
+                        <option value="9">Setembro</option>
+                        <option value="10">Outubro</option>
+                        <option value="11">Novembro</option>
+                        <option value="12">Dezembro</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label for="filterHalf">Quinzena:</label>
+                    <select id="filterHalf">
+                        <option value="">Todas</option>
+                        <option value="1">1-15</option>
+                        <option value="2">16-fim</option>
+                    </select>
+                </div>
+                
+                <button id="applyFilters" class="btn-primary">Aplicar</button>
+            </section>
+
+            <!-- Charts -->
+            <section class="charts-section">
+                <div class="chart-container">
+                    <h3>Evolução de Limpezas</h3>
+                    <canvas id="limpezasChart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <h3>Evolução de Ratings</h3>
+                    <canvas id="ratingsChart"></canvas>
+                </div>
+            </section>
+
+            <!-- Table -->
+            <section class="table-section">
+                <h3>Últimos Cadastros</h3>
+                <div class="table-container">
+                    <table id="entriesTable">
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>Documento</th>
+                                <th>Tipo</th>
+                                <th>Vendedor</th>
+                                <th>Status</th>
+                                <th>Data</th>
+                                <th id="actionsHeader" style="display: none;">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="entriesTableBody">
+                            <tr>
+                                <td colspan="6" class="no-data">Carregando...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="/js/dashboard.js"></script>
+</body>
+</html>
