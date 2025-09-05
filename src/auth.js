@@ -52,7 +52,7 @@ class Auth {
             const aad = crypto.randomBytes(16);
             
             // Create cipher
-            const cipher = crypto.createCipherGCM('aes-256-gcm');
+            const cipher = crypto.createCipherGCM('aes-256-gcm', derivedKey);
             cipher.setAAD(aad);
             
             // Encrypt
@@ -64,7 +64,7 @@ class Auth {
             
             // Encrypt the data key with master key
             const keyIv = crypto.randomBytes(12);
-            const keyCipher = crypto.createCipherGCM('aes-256-gcm');
+            const keyCipher = crypto.createCipherGCM('aes-256-gcm', Buffer.from(this.masterKey.slice(0, 32), 'utf8'));
             let wrappedKey = keyCipher.update(dataKey);
             wrappedKey = Buffer.concat([wrappedKey, keyCipher.final()]);
             const keyAuthTag = keyCipher.getAuthTag();
@@ -99,7 +99,7 @@ class Auth {
             } = encryptedData;
 
             // Decrypt the data key
-            const keyDecipher = crypto.createDecipherGCM('aes-256-gcm');
+            const keyDecipher = crypto.createDecipherGCM('aes-256-gcm', Buffer.from(this.masterKey.slice(0, 32), 'utf8'));
             keyDecipher.setAuthTag(Buffer.from(keyAuthTag, 'base64'));
             let dataKey = keyDecipher.update(Buffer.from(wrappedKey, 'base64'));
             dataKey = Buffer.concat([dataKey, keyDecipher.final()]);
@@ -108,7 +108,7 @@ class Auth {
             const derivedKey = crypto.hkdfSync('sha256', dataKey, Buffer.from(salt, 'base64'), this.masterKey, 32);
 
             // Create decipher
-            const decipher = crypto.createDecipherGCM('aes-256-gcm');
+            const decipher = crypto.createDecipherGCM('aes-256-gcm', derivedKey);
             decipher.setAAD(Buffer.from(aad, 'base64'));
             decipher.setAuthTag(Buffer.from(authTag, 'base64'));
 

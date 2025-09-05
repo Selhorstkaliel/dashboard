@@ -233,7 +233,7 @@ app.post('/api/auth/login', async (req, res) => {
 
             res.cookie('token', token, {
                 httpOnly: true,
-                secure: NODE_ENV === 'production',
+                secure: false, // Set to false for localhost testing
                 sameSite: 'Lax',
                 maxAge: 8 * 60 * 60 * 1000 // 8 hours
             });
@@ -917,16 +917,46 @@ app.post('/api/scheduler/run', auth.authenticateToken, auth.authorizeRoles('admi
 
 // Serve main dashboard for authenticated routes
 app.get('/', (req, res) => {
-    if (req.cookies.token) {
+    const token = req.cookies?.token;
+    console.log('Root route accessed, token:', token ? 'present' : 'missing');
+    
+    if (!token) {
+        console.log('No token found, redirecting to login');
+        return res.redirect('/login.html');
+    }
+    
+    // Verify token
+    try {
+        const decoded = auth.verifyToken(token);
+        console.log('Token valid, serving dashboard for user:', decoded.username);
         res.sendFile(path.join(__dirname, 'public', 'index.html'));
-    } else {
-        res.sendFile(path.join(__dirname, 'public', 'login.html'));
+    } catch (error) {
+        console.log('Token invalid, clearing and redirecting:', error.message);
+        res.clearCookie('token');
+        res.redirect('/login.html');
     }
 });
 
-// Catch all route for SPA
+// Catch all route for SPA (should be last and more specific)
 app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+    // Only serve index.html for authenticated users, otherwise redirect to login
+    const token = req.cookies?.token;
+    console.log('Catch-all route accessed for:', req.path, 'token:', token ? 'present' : 'missing');
+    
+    if (!token) {
+        console.log('No token in catch-all, redirecting to login');
+        return res.redirect('/login.html');
+    }
+    
+    try {
+        auth.verifyToken(token);
+        console.log('Token valid in catch-all, serving index.html');
+        res.sendFile(path.join(__dirname, 'public', 'index.html'));
+    } catch (error) {
+        console.log('Token invalid in catch-all, clearing and redirecting');
+        res.clearCookie('token');
+        res.redirect('/login.html');
+    }
 });
 
 // Error handling middleware
