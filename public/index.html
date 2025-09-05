@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - LimitClean</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <nav class="nav">
+                <div class="logo">LimitClean</div>
+                <ul class="nav-menu">
+                    <li class="nav-item"><a href="/" class="active">Dashboard</a></li>
+                    <li class="nav-item"><a href="/cadastro.html">Cadastro</a></li>
+                    <li class="nav-item"><a href="/config.html">Configurações</a></li>
+                    <li class="nav-item"><a href="/support.html">Suporte</a></li>
+                </ul>
+                <div class="user-info">
+                    <div class="user-avatar" id="userAvatar"></div>
+                    <span id="userName">Carregando...</span>
+                    <button class="btn btn-secondary btn-sm" onclick="logout()">Sair</button>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            <!-- KPI Cards -->
+            <div class="kpi-grid" id="kpiGrid">
+                <div class="kpi-card">
+                    <div class="kpi-value" id="limpezaCount">0</div>
+                    <div class="kpi-label">Vendas Limpeza</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-value" id="ratingCount">0</div>
+                    <div class="kpi-label">Vendas Rating</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-value" id="totalBruto">R$ 0</div>
+                    <div class="kpi-label">Total Bruto</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-value" id="totalLiquido">R$ 0</div>
+                    <div class="kpi-label">Total Líquido</div>
+                </div>
+            </div>
+
+            <!-- Charts Section -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem;">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Vendas por Período</h3>
+                        <select id="chartPeriod" class="form-select" style="width: auto;">
+                            <option value="month">Mês</option>
+                            <option value="quinzena">Quinzena</option>
+                            <option value="year">Ano</option>
+                        </select>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-container">
+                            <canvas id="salesChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Status dos Cadastros</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-container">
+                            <canvas id="statusChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filters -->
+            <div class="filters">
+                <div class="filters-grid">
+                    <div class="form-group">
+                        <label class="form-label">Status</label>
+                        <select id="filterStatus" class="form-select">
+                            <option value="">Todos</option>
+                            <option value="pendente">Pendente</option>
+                            <option value="processando">Processando</option>
+                            <option value="concluido">Concluído</option>
+                            <option value="cancelado">Cancelado</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Tipo</label>
+                        <select id="filterType" class="form-select">
+                            <option value="">Todos</option>
+                            <option value="limpeza">Limpeza</option>
+                            <option value="rating_pf">Rating PF</option>
+                            <option value="rating_pj">Rating PJ</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Vendedor</label>
+                        <input type="text" id="filterVendedor" class="form-control" placeholder="Nome do vendedor">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Buscar</label>
+                        <input type="text" id="searchInput" class="form-control" placeholder="Nome, CPF/CNPJ...">
+                    </div>
+                </div>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-primary" onclick="applyFilters()">Filtrar</button>
+                    <button class="btn btn-secondary" onclick="clearFilters()">Limpar</button>
+                    <button class="btn btn-success" onclick="exportData()">Exportar</button>
+                </div>
+            </div>
+
+            <!-- Entries Table -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Cadastros</h3>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-secondary btn-sm" onclick="refreshData()">
+                            🔄 Atualizar
+                        </button>
+                        <span id="lastUpdate" class="text-muted"></span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-container">
+                        <table class="table" id="entriesTable">
+                            <thead>
+                                <tr>
+                                    <th>Nome</th>
+                                    <th>CPF/CNPJ</th>
+                                    <th>Tipo</th>
+                                    <th>Vendedor</th>
+                                    <th>Valor Bruto</th>
+                                    <th>Valor Líquido</th>
+                                    <th>Status</th>
+                                    <th>Data</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="entriesTableBody">
+                                <tr>
+                                    <td colspan="9" class="text-center">
+                                        <div class="loading">
+                                            <div class="spinner"></div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- Pagination -->
+                    <div class="d-flex justify-content-between align-items-center mt-3">
+                        <div class="text-muted">
+                            Mostrando <span id="showingInfo">0</span> resultados
+                        </div>
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-secondary btn-sm" id="prevPage" onclick="changePage(-1)">
+                                ← Anterior
+                            </button>
+                            <span id="pageInfo">Página 1</span>
+                            <button class="btn btn-secondary btn-sm" id="nextPage" onclick="changePage(1)">
+                                Próxima →
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Entry Detail Modal -->
+    <div class="modal-overlay" id="entryModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Detalhes do Cadastro</h3>
+                <button class="modal-close" onclick="closeEntryModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="entryModalBody">
+                <div class="loading">
+                    <div class="spinner"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeEntryModal()">Fechar</button>
+                <button class="btn btn-primary" id="editStatusBtn" onclick="editEntryStatus()" style="display: none;">
+                    Editar Status
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Status Edit Modal -->
+    <div class="modal-overlay" id="statusModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Editar Status</h3>
+                <button class="modal-close" onclick="closeStatusModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="statusForm">
+                    <div class="form-group">
+                        <label class="form-label">Novo Status</label>
+                        <select id="newStatus" class="form-select" required>
+                            <option value="pendente">Pendente</option>
+                            <option value="processando">Processando</option>
+                            <option value="concluido">Concluído</option>
+                            <option value="cancelado">Cancelado</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Observação (opcional)</label>
+                        <textarea id="statusObservacao" class="form-control" rows="3" placeholder="Observações sobre a alteração..."></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeStatusModal()">Cancelar</button>
+                <button class="btn btn-primary" onclick="updateStatus()">Salvar</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/common.js"></script>
+    <script src="js/dashboard.js"></script>
+</body>
+</html>
