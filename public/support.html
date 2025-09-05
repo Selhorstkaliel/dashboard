@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Suporte - LimitClean Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <nav class="nav">
+                <div class="logo">LimitClean</div>
+                <ul class="nav-menu">
+                    <li class="nav-item"><a href="/">Dashboard</a></li>
+                    <li class="nav-item"><a href="/cadastro.html">Cadastro</a></li>
+                    <li class="nav-item"><a href="/config.html">Configurações</a></li>
+                    <li class="nav-item"><a href="/support.html" class="active">Suporte</a></li>
+                </ul>
+                <div class="user-info">
+                    <div class="user-avatar" id="userAvatar"></div>
+                    <span id="userName">Carregando...</span>
+                    <button class="btn btn-secondary btn-sm" onclick="logout()">Sair</button>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem;">
+                
+                <!-- Abrir Chamado -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">📩 Abrir Chamado</h2>
+                        <p class="text-muted">Precisa de ajuda? Abra um chamado e nossa equipe irá ajudá-lo!</p>
+                    </div>
+                    <div class="card-body">
+                        <form id="ticketForm" enctype="multipart/form-data">
+                            <div class="form-group">
+                                <label class="form-label">Categoria *</label>
+                                <select id="categoria" name="categoria" class="form-select" required>
+                                    <option value="">Selecione a categoria</option>
+                                    <option value="tecnico">Problema Técnico</option>
+                                    <option value="financeiro">Questão Financeira</option>
+                                    <option value="bug">Reportar Bug</option>
+                                    <option value="geral">Dúvida Geral</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Título do Chamado *</label>
+                                <input type="text" id="titulo" name="titulo" class="form-control" required placeholder="Descreva brevemente o problema">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Descrição Detalhada *</label>
+                                <textarea id="descricao" name="descricao" class="form-control" rows="6" required placeholder="Descreva detalhadamente o problema, incluindo quando acontece e como reproduzir..."></textarea>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Anexo (opcional)</label>
+                                <div class="file-upload">
+                                    <input type="file" id="anexo" name="attachment" accept="image/*,application/pdf,.txt,.doc,.docx">
+                                    <label for="anexo" class="file-upload-label">
+                                        📎 Clique para anexar arquivo (imagem, PDF ou documento)
+                                    </label>
+                                </div>
+                                <small class="text-muted">Máximo 5MB. Formatos: JPG, PNG, PDF, TXT, DOC, DOCX</small>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary btn-lg" id="submitTicketBtn">
+                                <span id="submitText">📨 Enviar Chamado</span>
+                                <div id="submitSpinner" class="spinner d-none"></div>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- FAQ -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">❓ FAQ - Perguntas Frequentes</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="faq-list">
+                            <div class="faq-item">
+                                <h4 class="faq-question" onclick="toggleFAQ(this)">
+                                    Como redefinir minha senha? 
+                                    <span class="faq-toggle">+</span>
+                                </h4>
+                                <div class="faq-answer d-none">
+                                    <p>Vá para Configurações > Meu Perfil, digite sua senha atual e a nova senha nos campos apropriados.</p>
+                                </div>
+                            </div>
+                            
+                            <div class="faq-item">
+                                <h4 class="faq-question" onclick="toggleFAQ(this)">
+                                    Como funciona o sistema de descontos? 
+                                    <span class="faq-toggle">+</span>
+                                </h4>
+                                <div class="faq-answer d-none">
+                                    <p>Cada representante e vendedor tem um desconto padrão configurado pelo admin. Este desconto é aplicado automaticamente nos cadastros, mas pode ser ajustado manualmente.</p>
+                                </div>
+                            </div>
+                            
+                            <div class="faq-item">
+                                <h4 class="faq-question" onclick="toggleFAQ(this)">
+                                    Como baixar contratos em PDF? 
+                                    <span class="faq-toggle">+</span>
+                                </h4>
+                                <div class="faq-answer d-none">
+                                    <p>Os contratos são gerados automaticamente quando você marca "Aceito os termos" no cadastro. Administradores podem visualizar e baixar os contratos na tela de detalhes do cliente.</p>
+                                </div>
+                            </div>
+                            
+                            <div class="faq-item">
+                                <h4 class="faq-question" onclick="toggleFAQ(this)">
+                                    Qual o limite de tamanho para uploads? 
+                                    <span class="faq-toggle">+</span>
+                                </h4>
+                                <div class="faq-answer d-none">
+                                    <p>O limite é de 5MB por arquivo. Formatos aceitos: JPG, PNG, PDF para documentos e imagens.</p>
+                                </div>
+                            </div>
+                            
+                            <div class="faq-item">
+                                <h4 class="faq-question" onclick="toggleFAQ(this)">
+                                    Como funciona a hierarquia de usuários? 
+                                    <span class="faq-toggle">+</span>
+                                </h4>
+                                <div class="faq-answer d-none">
+                                    <p><strong>Admin:</strong> Vê tudo e gerencia todos os usuários<br>
+                                    <strong>Representante:</strong> Vê seus vendedores e clientes<br>
+                                    <strong>Vendedor:</strong> Vê apenas seus próprios clientes</p>
+                                </div>
+                            </div>
+                            
+                            <div class="faq-item">
+                                <h4 class="faq-question" onclick="toggleFAQ(this)">
+                                    Como validar CPF/CNPJ? 
+                                    <span class="faq-toggle">+</span>
+                                </h4>
+                                <div class="faq-answer d-none">
+                                    <p>O sistema valida automaticamente CPF e CNPJ quando você digita no campo de documento. A validação aparece abaixo do campo.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Meus Chamados -->
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h2 class="card-title">🎫 Meus Chamados</h2>
+                    <button class="btn btn-secondary" onclick="loadTickets()">🔄 Atualizar</button>
+                </div>
+                <div class="card-body">
+                    <div class="table-container">
+                        <table class="table" id="ticketsTable">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Título</th>
+                                    <th>Categoria</th>
+                                    <th>Status</th>
+                                    <th>Data</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="ticketsTableBody">
+                                <tr>
+                                    <td colspan="6" class="text-center">
+                                        <div class="loading">
+                                            <div class="spinner"></div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Ticket Detail Modal -->
+    <div class="modal-overlay" id="ticketModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">🎫 Detalhes do Chamado</h3>
+                <button class="modal-close" onclick="closeTicketModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="ticketModalBody">
+                <div class="loading">
+                    <div class="spinner"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeTicketModal()">Fechar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Alert -->
+    <div id="successAlert" class="alert alert-success d-none" style="position: fixed; top: 20px; right: 20px; z-index: 1001; max-width: 400px;">
+        <span id="successMessage">✅ Chamado criado com sucesso! Nossa equipe irá analisá-lo em breve.</span>
+    </div>
+
+    <!-- Error Alert -->
+    <div id="errorAlert" class="alert alert-danger d-none" style="position: fixed; top: 20px; right: 20px; z-index: 1001; max-width: 400px;">
+        <span id="errorMessage"></span>
+    </div>
+
+    <style>
+        .faq-item {
+            border-bottom: 1px solid var(--border-primary);
+            padding: 1rem 0;
+        }
+        
+        .faq-question {
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 0;
+            color: var(--text-primary);
+            transition: color 0.3s ease;
+        }
+        
+        .faq-question:hover {
+            color: var(--accent-primary);
+        }
+        
+        .faq-toggle {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--accent-primary);
+            transition: transform 0.3s ease;
+        }
+        
+        .faq-item.active .faq-toggle {
+            transform: rotate(45deg);
+        }
+        
+        .faq-answer {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: var(--bg-tertiary);
+            border-radius: 8px;
+            border-left: 3px solid var(--accent-primary);
+        }
+        
+        .faq-answer p {
+            margin: 0;
+            color: var(--text-secondary);
+        }
+        
+        .category-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .category-tecnico { background: rgba(9, 132, 227, 0.2); color: var(--accent-secondary); }
+        .category-financeiro { background: rgba(255, 171, 0, 0.2); color: var(--accent-warning); }
+        .category-bug { background: rgba(248, 81, 73, 0.2); color: var(--accent-danger); }
+        .category-geral { background: rgba(63, 185, 80, 0.2); color: var(--accent-success); }
+    </style>
+
+    <script src="js/support.js"></script>
+</body>
+</html>
