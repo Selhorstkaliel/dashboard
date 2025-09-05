@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Suporte</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <div class="header">
+        <div class="logo">Dashboard - Suporte</div>
+        <div class="user-info">
+            <span id="user-name"></span>
+            <button id="back-btn" class="btn btn-secondary">Voltar ao Dashboard</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <div id="alert-container"></div>
+
+        <div class="grid grid-2">
+            <!-- Create Ticket -->
+            <div class="card">
+                <h3>Criar Ticket de Suporte</h3>
+                <form id="ticketForm">
+                    <div class="form-group">
+                        <label for="subject">Assunto</label>
+                        <input type="text" id="subject" class="form-control" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="priority">Prioridade</label>
+                        <select id="priority" class="form-select">
+                            <option value="low">Baixa</option>
+                            <option value="medium" selected>Média</option>
+                            <option value="high">Alta</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="message">Mensagem</label>
+                        <textarea id="message" class="form-control" rows="4" required></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Enviar Ticket</button>
+                </form>
+            </div>
+
+            <!-- Tickets List -->
+            <div class="card">
+                <h3>Meus Tickets</h3>
+                <div id="tickets-list"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/support.js"></script>
+</body>
+</html>
