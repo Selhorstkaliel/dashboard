@@ -29,88 +29,101 @@ const DB_PATH = path.join(__dirname, 'db.sqlite');
 
 // Initialize database
 function initializeDatabase() {
-    const db = new sqlite3.Database(DB_PATH);
+    return new Promise((resolve, reject) => {
+        const db = new sqlite3.Database(DB_PATH);
 
-    db.serialize(() => {
-        // Users table
-        db.run(`CREATE TABLE IF NOT EXISTS users (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            username VARCHAR(50) UNIQUE NOT NULL,
-            password_hash TEXT NOT NULL,
-            role VARCHAR(20) NOT NULL DEFAULT 'vendedor',
-            rep_id INTEGER,
-            name VARCHAR(100) NOT NULL,
-            email VARCHAR(100) NOT NULL,
-            phone VARCHAR(20) NOT NULL,
-            discount_value REAL DEFAULT 0,
-            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-            updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (rep_id) REFERENCES users(id)
-        )`);
+        db.serialize(() => {
+            // Users table
+            db.run(`CREATE TABLE IF NOT EXISTS users (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                username VARCHAR(50) UNIQUE NOT NULL,
+                password_hash TEXT NOT NULL,
+                role VARCHAR(20) NOT NULL DEFAULT 'vendedor',
+                rep_id INTEGER,
+                name VARCHAR(100) NOT NULL,
+                email VARCHAR(100) NOT NULL,
+                phone VARCHAR(20) NOT NULL,
+                discount_value REAL DEFAULT 0,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (rep_id) REFERENCES users(id)
+            )`);
 
-        // Entries table
-        db.run(`CREATE TABLE IF NOT EXISTS entries (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            user_id INTEGER NOT NULL,
-            type VARCHAR(20) NOT NULL,
-            doc VARCHAR(20) NOT NULL,
-            doc_type VARCHAR(10) NOT NULL,
-            nome VARCHAR(200) NOT NULL,
-            telefone VARCHAR(20) NOT NULL,
-            vendedor VARCHAR(100) NOT NULL,
-            valor_bruto REAL NOT NULL,
-            desconto_aplicado REAL NOT NULL,
-            valor_liquido REAL NOT NULL,
-            status VARCHAR(20) DEFAULT 'pendente',
-            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-            updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-            encrypted_json TEXT,
-            wrapped_key TEXT,
-            iv TEXT,
-            auth_tag TEXT,
-            aad TEXT,
-            salt TEXT,
-            contract_filename VARCHAR(255),
-            FOREIGN KEY (user_id) REFERENCES users(id)
-        )`);
+            // Entries table
+            db.run(`CREATE TABLE IF NOT EXISTS entries (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER NOT NULL,
+                type VARCHAR(20) NOT NULL,
+                doc VARCHAR(20) NOT NULL,
+                doc_type VARCHAR(10) NOT NULL,
+                nome VARCHAR(200) NOT NULL,
+                telefone VARCHAR(20) NOT NULL,
+                vendedor VARCHAR(100) NOT NULL,
+                valor_bruto REAL NOT NULL,
+                desconto_aplicado REAL NOT NULL,
+                valor_liquido REAL NOT NULL,
+                status VARCHAR(20) DEFAULT 'pendente',
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                encrypted_json TEXT,
+                wrapped_key TEXT,
+                iv TEXT,
+                auth_tag TEXT,
+                aad TEXT,
+                salt TEXT,
+                contract_filename VARCHAR(255),
+                FOREIGN KEY (user_id) REFERENCES users(id)
+            )`);
 
-        // Attachments table
-        db.run(`CREATE TABLE IF NOT EXISTS attachments (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            entry_id INTEGER NOT NULL,
-            filename VARCHAR(255) NOT NULL,
-            original_name VARCHAR(255) NOT NULL,
-            mimetype VARCHAR(100) NOT NULL,
-            size INTEGER NOT NULL,
-            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (entry_id) REFERENCES entries(id)
-        )`);
+            // Attachments table
+            db.run(`CREATE TABLE IF NOT EXISTS attachments (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                entry_id INTEGER NOT NULL,
+                filename VARCHAR(255) NOT NULL,
+                original_name VARCHAR(255) NOT NULL,
+                mimetype VARCHAR(100) NOT NULL,
+                size INTEGER NOT NULL,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (entry_id) REFERENCES entries(id)
+            )`);
 
-        // Tickets table
-        db.run(`CREATE TABLE IF NOT EXISTS tickets (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            user_id INTEGER NOT NULL,
-            titulo VARCHAR(200) NOT NULL,
-            descricao TEXT NOT NULL,
-            categoria VARCHAR(50) DEFAULT 'geral',
-            status VARCHAR(20) DEFAULT 'aberto',
-            attachment_path VARCHAR(255),
-            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-            updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (user_id) REFERENCES users(id)
-        )`);
+            // Tickets table
+            db.run(`CREATE TABLE IF NOT EXISTS tickets (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER NOT NULL,
+                titulo VARCHAR(200) NOT NULL,
+                descricao TEXT NOT NULL,
+                categoria VARCHAR(50) DEFAULT 'geral',
+                status VARCHAR(20) DEFAULT 'aberto',
+                attachment_path VARCHAR(255),
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (user_id) REFERENCES users(id)
+            )`, function(err) {
+                if (err) {
+                    console.error('Error creating tickets table:', err);
+                    reject(err);
+                    return;
+                }
 
-        // Create default admin user
-        const adminHash = auth.hashPassword('kaskolk14');
-        adminHash.then(hash => {
-            db.run(`INSERT OR IGNORE INTO users (username, password_hash, role, name, email, phone) 
-                    VALUES (?, ?, 'admin', 'Kaliel', 'kaliel@limitclean.com', '(11) 99999-9999')`, 
-                ['Kaliel', hash]);
+                // Create default admin user
+                auth.hashPassword('kaskolk14').then(hash => {
+                    db.run(`INSERT OR IGNORE INTO users (username, password_hash, role, name, email, phone) 
+                            VALUES (?, ?, 'admin', 'Kaliel', 'kaliel@limitclean.com', '(11) 99999-9999')`, 
+                        ['Kaliel', hash], function(err) {
+                        db.close();
+                        if (err) {
+                            console.error('Error creating admin user:', err);
+                            reject(err);
+                        } else {
+                            console.log('Database initialized successfully');
+                            resolve();
+                        }
+                    });
+                }).catch(reject);
+            });
         });
     });
-
-    db.close();
-    console.log('Database initialized successfully');
 }
 
 // Security middleware
@@ -930,16 +943,25 @@ app.use((error, req, res, next) => {
 });
 
 // Initialize database and start server
-initializeDatabase();
+async function startServer() {
+    try {
+        await initializeDatabase();
+        
+        // Initialize scheduler after database is ready
+        scheduler.init();
+        
+        app.listen(PORT, () => {
+            console.log(`Server running on port ${PORT}`);
+            console.log(`Environment: ${NODE_ENV}`);
+            console.log(`Dashboard URL: http://localhost:${PORT}`);
+        });
+    } catch (error) {
+        console.error('Server startup error:', error);
+        process.exit(1);
+    }
+}
 
-// Initialize scheduler
-scheduler.init();
-
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-    console.log(`Environment: ${NODE_ENV}`);
-    console.log(`Dashboard URL: http://localhost:${PORT}`);
-});
+startServer();
 
 // Graceful shutdown
 process.on('SIGTERM', () => {

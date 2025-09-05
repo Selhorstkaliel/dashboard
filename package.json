@@ -8,26 +8,32 @@
     "dev": "nodemon server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": ["dashboard", "limitclean", "contracts", "management"],
+  "keywords": [
+    "dashboard",
+    "limitclean",
+    "contracts",
+    "management"
+  ],
   "author": "Selhorst Kaliel",
   "license": "MIT",
   "dependencies": {
-    "express": "^4.18.2",
-    "sqlite3": "^5.1.6",
     "bcryptjs": "^2.4.3",
-    "jsonwebtoken": "^9.0.2",
-    "helmet": "^7.0.0",
+    "compression": "^1.7.4",
+    "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
+    "crypto": "^1.0.1",
+    "dotenv": "^16.6.1",
+    "express": "^4.18.2",
     "express-rate-limit": "^6.8.1",
+    "express-validator": "^7.0.1",
+    "helmet": "^7.0.0",
     "hpp": "^0.2.3",
-    "xss-clean": "^0.1.4",
+    "joi": "^17.9.2",
+    "jsonwebtoken": "^9.0.2",
     "multer": "^2.0.0-alpha.7",
     "pdf-lib": "^1.17.1",
-    "joi": "^17.9.2",
-    "crypto": "^1.0.1",
-    "cookie-parser": "^1.4.6",
-    "compression": "^1.7.4",
-    "express-validator": "^7.0.1"
+    "sqlite3": "^5.1.6",
+    "xss-clean": "^0.1.4"
   },
   "devDependencies": {
     "nodemon": "^3.0.1"
