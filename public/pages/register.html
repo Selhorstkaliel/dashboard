@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Cadastro</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="text-center mb-3">
+                <h1 class="logo">Cadastro de Usuário</h1>
+                <p>Criar novo usuário no sistema</p>
+            </div>
+
+            <div id="alert-container"></div>
+
+            <form id="registerForm">
+                <div class="form-group">
+                    <label for="username">Usuário</label>
+                    <input type="text" id="username" class="form-control" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" class="form-control" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Senha</label>
+                    <input type="password" id="password" class="form-control" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="user_type">Tipo de Usuário</label>
+                    <select id="user_type" class="form-select" required>
+                        <option value="">Selecione o tipo</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="discount_percentage">Desconto (%)</label>
+                    <input type="number" id="discount_percentage" class="form-control" 
+                           min="0" max="100" step="0.01" value="0">
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-full">Cadastrar</button>
+            </form>
+
+            <div class="text-center mt-3">
+                <a href="/" class="btn btn-secondary">Voltar ao Login</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/register.js"></script>
+</body>
+</html>
