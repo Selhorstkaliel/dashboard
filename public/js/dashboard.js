@@ -96,7 +96,7 @@ document.addEventListener('DOMContentLoaded', function() {
             await loadEntries();
             
             // Load charts (placeholder)
-            // await loadCharts();
+            await loadCharts();
             
         } catch (error) {
             console.error('Error loading dashboard:', error);
@@ -109,11 +109,20 @@ document.addEventListener('DOMContentLoaded', function() {
     // Load statistics
     async function loadStats() {
         try {
-            // For now, show placeholder values
-            document.getElementById('limpezasCount').textContent = '0';
-            document.getElementById('ratingsCount').textContent = '0';
-            document.getElementById('totalBruto').textContent = 'R$ 0,00';
-            document.getElementById('totalLiquido').textContent = 'R$ 0,00';
+            const response = await fetch('/api/stats', {
+                credentials: 'include'
+            });
+            
+            if (response.ok) {
+                const stats = await response.json();
+                
+                document.getElementById('limpezasCount').textContent = stats.limpezas_count;
+                document.getElementById('ratingsCount').textContent = stats.ratings_count;
+                document.getElementById('totalBruto').textContent = formatCurrency(stats.total_bruto);
+                document.getElementById('totalLiquido').textContent = formatCurrency(stats.total_liquido);
+            } else {
+                throw new Error('Failed to load stats');
+            }
         } catch (error) {
             console.error('Error loading stats:', error);
         }
@@ -122,15 +131,24 @@ document.addEventListener('DOMContentLoaded', function() {
     // Load entries
     async function loadEntries() {
         try {
-            // For now, show placeholder message
+            const response = await fetch('/api/entries?limit=50', {
+                credentials: 'include'
+            });
+            
+            if (response.ok) {
+                const entries = await response.json();
+                updateEntriesTable(entries);
+            } else {
+                throw new Error('Failed to load entries');
+            }
+        } catch (error) {
+            console.error('Error loading entries:', error);
             const tableBody = document.getElementById('entriesTableBody');
             tableBody.innerHTML = `
                 <tr>
-                    <td colspan="7" class="no-data">Nenhum cadastro encontrado. Sistema em desenvolvimento.</td>
+                    <td colspan="7" class="no-data">Erro ao carregar cadastros.</td>
                 </tr>
             `;
-        } catch (error) {
-            console.error('Error loading entries:', error);
         }
     }
 
@@ -182,11 +200,246 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Show error message
-    function showError(message) {
-        // For now, just log to console
-        console.error('Dashboard error:', message);
-        // TODO: Implement proper error display
+    // Update entries table
+    function updateEntriesTable(entries) {
+        const tableBody = document.getElementById('entriesTableBody');
+        
+        if (!entries || entries.length === 0) {
+            tableBody.innerHTML = `
+                <tr>
+                    <td colspan="7" class="no-data">Nenhum cadastro encontrado.</td>
+                </tr>
+            `;
+            return;
+        }
+        
+        tableBody.innerHTML = entries.map(entry => `
+            <tr>
+                <td>${entry.nome}</td>
+                <td>${entry.doc}</td>
+                <td>${entry.type === 'limpeza' ? 'Limpeza' : `Rating ${entry.rating_subtype || ''}`}</td>
+                <td>${entry.vendedor || '-'}</td>
+                <td>${formatStatus(entry.status)}</td>
+                <td>${formatDate(entry.created_at)}</td>
+                ${currentUser.role === 'admin' ? `
+                    <td>
+                        <button class="btn-small btn-edit" onclick="editStatus(${entry.id}, '${entry.status}')">
+                            Editar
+                        </button>
+                    </td>
+                ` : ''}
+            </tr>
+        `).join('');
+    }
+
+    // Load charts
+    async function loadCharts() {
+        try {
+            const filters = getFilters();
+            await Promise.all([
+                loadVendasChart(filters),
+                loadRatingChart(filters)
+            ]);
+        } catch (error) {
+            console.error('Error loading charts:', error);
+        }
+    }
+
+    // Load vendas chart
+    async function loadVendasChart(filters) {
+        try {
+            const params = new URLSearchParams();
+            if (filters.year) params.append('year', filters.year);
+            if (filters.month) params.append('month', filters.month);
+            if (filters.half) params.append('half', filters.half);
+            
+            const response = await fetch(`/api/charts/vendas?${params}`, {
+                credentials: 'include'
+            });
+            
+            if (response.ok) {
+                const data = await response.json();
+                renderVendasChart(data);
+            }
+        } catch (error) {
+            console.error('Error loading vendas chart:', error);
+        }
+    }
+
+    // Load rating chart
+    async function loadRatingChart(filters) {
+        try {
+            const params = new URLSearchParams();
+            if (filters.year) params.append('year', filters.year);
+            if (filters.month) params.append('month', filters.month);
+            if (filters.half) params.append('half', filters.half);
+            
+            const response = await fetch(`/api/charts/rating?${params}`, {
+                credentials: 'include'
+            });
+            
+            if (response.ok) {
+                const data = await response.json();
+                renderRatingChart(data);
+            }
+        } catch (error) {
+            console.error('Error loading rating chart:', error);
+        }
+    }
+
+    // Render vendas chart
+    function renderVendasChart(data) {
+        const ctx = document.getElementById('limpezasChart');
+        
+        if (window.vendasChart) {
+            window.vendasChart.destroy();
+        }
+        
+        window.vendasChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: data.map(d => d.label),
+                datasets: [{
+                    label: 'Limpezas',
+                    data: data.map(d => d.count),
+                    borderColor: '#00ffff',
+                    backgroundColor: 'rgba(0, 255, 255, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: '#ffffff'
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        ticks: {
+                            color: '#cccccc'
+                        },
+                        grid: {
+                            color: '#333333'
+                        }
+                    },
+                    y: {
+                        ticks: {
+                            color: '#cccccc'
+                        },
+                        grid: {
+                            color: '#333333'
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // Render rating chart
+    function renderRatingChart(data) {
+        const ctx = document.getElementById('ratingsChart');
+        
+        if (window.ratingChart) {
+            window.ratingChart.destroy();
+        }
+        
+        window.ratingChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: data.map(d => d.label),
+                datasets: [
+                    {
+                        label: 'Feitos',
+                        data: data.map(d => d.feito),
+                        backgroundColor: '#00ff88'
+                    },
+                    {
+                        label: 'Não Feitos',
+                        data: data.map(d => d.nao_feito),
+                        backgroundColor: '#ff4444'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: '#ffffff'
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        ticks: {
+                            color: '#cccccc'
+                        },
+                        grid: {
+                            color: '#333333'
+                        }
+                    },
+                    y: {
+                        ticks: {
+                            color: '#cccccc'
+                        },
+                        grid: {
+                            color: '#333333'
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // Get current filters
+    function getFilters() {
+        return {
+            year: document.getElementById('filterYear').value,
+            month: document.getElementById('filterMonth').value,
+            half: document.getElementById('filterHalf').value
+        };
+    }
+
+    // Global function for editing status (admin only)
+    window.editStatus = function(entryId, currentStatus) {
+        if (currentUser.role !== 'admin') return;
+        
+        const statuses = ['Restrição', 'Finalizado', 'Reprotocolo'];
+        const newStatus = prompt(`Status atual: ${currentStatus}\n\nEscolha o novo status:\n1 - Restrição\n2 - Finalizado\n3 - Reprotocolo\n\nDigite o número:`);
+        
+        if (newStatus && newStatus >= 1 && newStatus <= 3) {
+            const statusName = statuses[parseInt(newStatus) - 1];
+            updateEntryStatus(entryId, statusName);
+        }
+    };
+
+    // Update entry status
+    async function updateEntryStatus(entryId, status) {
+        try {
+            const response = await fetch(`/api/entries/${entryId}/status`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ status }),
+                credentials: 'include'
+            });
+            
+            if (response.ok) {
+                alert('Status atualizado com sucesso!');
+                loadDashboardData(); // Reload data
+            } else {
+                const error = await response.json();
+                throw new Error(error.error || 'Erro ao atualizar status');
+            }
+        } catch (error) {
+            console.error('Error updating status:', error);
+            alert('Erro ao atualizar status: ' + error.message);
+        }
     }
 
     // Format currency

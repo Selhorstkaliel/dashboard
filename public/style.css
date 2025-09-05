@@ -724,6 +724,24 @@ fieldset legend {
   color: var(--secondary-color);
 }
 
+.btn-small {
+  padding: 0.3rem 0.8rem;
+  font-size: 0.8rem;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.btn-edit {
+  background: var(--accent-color);
+  color: var(--bg-dark);
+}
+
+.btn-edit:hover {
+  background: var(--primary-color);
+}
+
 /* Loading overlay */
 .loading-overlay {
   position: fixed;

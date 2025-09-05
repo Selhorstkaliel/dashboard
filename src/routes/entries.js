@@ -6,7 +6,7 @@ const { getDb } = require('../database');
 const { requireAuth, canAccessEntry } = require('../auth');
 const { encryptData, serializeEncryptedData, decryptData, deserializeEncryptedData } = require('../encryption');
 const { generateContract } = require('../contrato');
-const { validateDocumentRemote, parseMoney, formatMoney } = require('../validators');
+const { validateDocumentRemote, parseMoney, formatMoney, isValidCPF, isValidCNPJ } = require('../validators');
 
 const router = express.Router();
 
