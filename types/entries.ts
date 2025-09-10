@@ -22,7 +22,7 @@ export interface CreateEntryRequest {
   nome: string;
   telefone?: string;
   vendedor?: string;
-  valor: number;
+  valor?: number; // Optional for rating entries
   // Additional fields for rating
   email?: string;
   endereco?: string;
