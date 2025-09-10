@@ -1,7 +1,7 @@
 export type EntryStatus = 'Restrição' | 'Finalizado' | 'Reprotocolo';
 export type EntryType = 'limpeza' | 'rating';
 
-export interface Entry {
+export interface Entry extends Record<string, unknown> {
   id: string;
   tipo: EntryType;
   doc: string;
